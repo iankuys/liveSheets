@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="app">
+    <table id="sheets">
+        {% for row in range(rows) %}
+        <tr>
+            {% for col in range(cols) %}
+            <td>
+                <div contenteditable id="row-{{row}}-col-{{col}}"></div>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="button" name="save" id="save-btn" onClick="saveChanges()">Save Changes</button>
+</div>
+<script type="text/javascript">
+    var socketio = io();
+    const table = document.getElementById("sheets")
+
+    const updateTable = (data) => {
+        const jsonObject = JSON.parse(data);
+        const jsonData = jsonObject.data;
+
+        for (let i = 0; i < jsonData.length; i++) {
+            for (let j = 0; j < jsonData[0].length; j++){
+                const cellId = `row-${i}-col-${j}`;
+                const cell = document.getElementById(cellId);
+                if (cell) {
+                    cell.textContent = jsonData[i][j]
+                }
+            }
+        }
+    }
+
+    const saveChanges = () => {
+        let changes = []
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                changes.push({
+                    row: i,
+                    col: j,
+                    value: col.textContent.trim()
+                })
+            }  
+        }
+        socketio.emit("changes", { data: changes });
+    }
+
+    socketio.on("changes", (data) => {
+        updateTable(data);
+    });
+
+
+</script>
+{% endblock %}

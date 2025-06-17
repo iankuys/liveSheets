@@ -1,0 +1,26 @@
+table {
+  border: 1px solid;  
+  table-layout: fixed;
+  width: 200px;
+}
+
+th,
+td {
+  border: 1px solid black;
+  width: 100px;
+  overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
